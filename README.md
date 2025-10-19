@@ -22,7 +22,7 @@
 
 ---
 
-## 🧩 General Information
+## General Information
 
 **Learn 4 Sudan**  "Learn for Sudan" is a non-profit organization aimed at supporting youth in the field of learning and development. The organization seeks to provide the necessary means and resources to build a generation capable of driving the country toward progress and prosperity.
 
@@ -37,7 +37,7 @@ Sudan has a growing community of young learners eager to build their skills but 
 
 ---
 
-## ⚙️ Technologies Used
+## Technologies Used
 
 * **Frontend:** React  +  CSS
 * **Backend:** Express.js (Node.js)
@@ -46,7 +46,7 @@ Sudan has a growing community of young learners eager to build their skills but 
 
 ---
 
-## ✨ Features
+## Features
 
 * single-page website for Learn 4 Sudan incorporating all major components (Homepage + About + Programs + Scholarship Application)
 *  Responsive and accessible design for all devices.
@@ -57,7 +57,7 @@ Sudan has a growing community of young learners eager to build their skills but 
  
 ---
 
-## 🖼️ Screenshots
+## Screenshots
 
 > *(Screenshots will be added after initial deployment)*
 
@@ -69,7 +69,7 @@ Example page layout:
 
 ---
 
-## 🛠️ Setup
+##  Setup
 
 ### Requirements
 
@@ -109,7 +109,7 @@ Then open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 ---
 
-## 🚀 Usage
+## Usage
 
 * **Users:**
   Visit the site, sign up (or sign in with Google), and fill out the scholarship form.
@@ -125,7 +125,7 @@ Then open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 ---
 
-## 📈 Project Status
+##  Project Status
 
 **Project is:** 🟡 *In Progress*
 
@@ -135,7 +135,7 @@ Then open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 ---
 
-## 💡 Room for Improvement
+## Room for Improvement
 
 **Areas to enhance:**
 
@@ -152,12 +152,12 @@ Then open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 ---
 
-## 🙌 Acknowledgements
+## Acknowledgements
 
 * Inspired by the mission of **Learn 4 Sudan** and its incredible volunteers.
 ---
 
-## 📬 Contact
+## Contact
 
 Created by **@MarwaSabon** for **Learn for Sudan** 🌍
 Feel free to reach out for collaboration or feedback!
