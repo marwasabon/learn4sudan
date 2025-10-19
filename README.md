@@ -127,11 +127,7 @@ Then open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 ##  Project Status
 
-**Project is:** 🟡 *In Progress*
-
-* Frontend UI/UX complete
-* Backend API in development
-* Admin dashboard & OCR integration in next sprint
+**Project is:**  *In Progress*
 
 ---
 
