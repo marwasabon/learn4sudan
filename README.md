@@ -59,7 +59,12 @@ Sudan has a growing community of young learners eager to build their skills but 
 
 ## Screenshots
 
-> *(Screenshots will be added after initial deployment)*
+> <img width="1440" height="3357" alt="About" src="https://github.com/user-attachments/assets/7ae3f094-71ca-4530-ac93-765260e5820e" />
+<img width="1440" height="1727" alt="Contact" src="https://github.com/user-attachments/assets/93882b60-6649-4eab-94dd-3d466b7c1d09" />
+<img width="1440" height="3503" alt="Blog" src="https://github.com/user-attachments/assets/b09e4585-52ba-4837-9be3-00a07aaa4839" />
+<img width="1440" height="2899" alt="Landing" src="https://github.com/user-attachments/assets/4cb81a80-f3f1-4b81-aea2-906d35895722" />
+<img width="1440" height="900" alt="Success" src="https://github.com/user-attachments/assets/83e229a1-da07-4d5c-9574-c479d3a9348b" />
+
 
 Example page layout:
 
