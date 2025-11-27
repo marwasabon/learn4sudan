@@ -1,0 +1,77 @@
+erDiagram
+  USERS ||--o{ USER_ROLES : has
+  ROLES ||--o{ USER_ROLES : includes
+  CATEGORIES ||--o{ COURSES : classifies
+  PROGRAMS ||--o{ PROGRAM_COURSES : contains
+  COURSES ||--o{ PROGRAM_COURSES : mapped
+  USERS ||--o{ APPLICATIONS : submits
+  PROGRAMS ||--o{ APPLICATIONS : receives
+
+  USERS {
+    BIGSERIAL id PK
+    TEXT email UNIQUE
+    TEXT password_hash
+    TEXT first_name
+    TEXT last_name
+    TEXT status
+    TIMESTAMPTZ created_at
+    TIMESTAMPTZ updated_at
+  }
+  ROLES {
+    BIGSERIAL id PK
+    TEXT name UNIQUE
+    TEXT description
+    TIMESTAMPTZ created_at
+  }
+  USER_ROLES {
+    BIGINT user_id FK
+    BIGINT role_id FK
+    TIMESTAMPTZ assigned_at
+    PK (user_id, role_id)
+  }
+  CATEGORIES {
+    BIGSERIAL id PK
+    TEXT name UNIQUE
+    TIMESTAMPTZ created_at
+  }
+  COURSES {
+    BIGSERIAL id PK
+    TEXT title
+    TEXT short_description
+    TEXT url
+    TEXT level
+    TEXT language
+    INTEGER hours
+    NUMERIC rating
+    BIGINT category_id FK
+    BOOLEAN is_active
+    TIMESTAMPTZ created_at
+  }
+  PROGRAMS {
+    BIGSERIAL id PK
+    TEXT name UNIQUE
+    TEXT description
+    INTEGER capacity
+    TEXT status
+    TIMESTAMPTZ application_open_at
+    TIMESTAMPTZ application_close_at
+    DATE start_date
+    DATE end_date
+    TIMESTAMPTZ created_at
+  }
+  PROGRAM_COURSES {
+    BIGINT program_id FK
+    BIGINT course_id FK
+    BOOLEAN is_required
+    INTEGER sequence_no
+    PK (program_id, course_id)
+  }
+  APPLICATIONS {
+    BIGSERIAL id PK
+    BIGINT user_id FK
+    BIGINT program_id FK
+    TEXT status
+    TIMESTAMPTZ applied_at
+    UNIQUE (user_id, program_id)
+  }
+ 
