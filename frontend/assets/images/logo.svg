@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 60">
+  <defs>
+    <style>
+      .t1{font:700 28px 'Segoe UI', Arial, sans-serif; letter-spacing:1px;}
+      .t2{font:600 10px 'Segoe UI', Arial, sans-serif;}
+    </style>
+  </defs>
+  <rect x="0" y="0" width="220" height="60" rx="10" fill="none"/>
+  <text x="10" y="36" class="t1" fill="#ffffff">LEARN</text>
+  <text x="100" y="36" class="t1" fill="#ffcc00">4</text>
+  <text x="115" y="36" class="t1" fill="#ffffff">SUDAN</text>
+  <text x="12" y="52" class="t2" fill="#80cbc4">EDUCATIONAL ORGANIZATION</text>
+</svg>

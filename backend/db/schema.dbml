@@ -1,0 +1,91 @@
+// DBML representation for dbdiagram.io
+// Paste this directly into https://dbdiagram.io
+
+Table roles {
+  id bigserial [pk]
+  name text [unique, not null]
+  description text
+  created_at timestamptz [default: `now()`]
+}
+
+Table users {
+  id bigserial [pk]
+  email text [unique, not null]
+  password_hash text
+  first_name text
+  last_name text
+  status text [default: 'active']
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+}
+
+Table user_roles {
+  user_id bigint [not null, ref: > users.id]
+  role_id bigint [not null, ref: > roles.id]
+  assigned_at timestamptz [default: `now()`]
+  indexes {
+    (user_id, role_id) [pk]
+  }
+}
+
+Table categories {
+  id bigserial [pk]
+  name text [unique, not null]
+  created_at timestamptz [default: `now()`]
+}
+
+Table courses {
+  id bigserial [pk]
+  title text [not null]
+  short_description text
+  url text
+  level text
+  language text
+  hours int
+  rating numeric
+  category_id bigint [ref: > categories.id]
+  is_active boolean [default: true]
+  created_at timestamptz [default: `now()`]
+}
+
+Table programs {
+  id bigserial [pk]
+  name text [unique, not null]
+  description text
+  capacity int
+  status text [default: 'draft']
+  application_open_at timestamptz
+  application_close_at timestamptz
+  start_date date
+  end_date date
+  created_at timestamptz [default: `now()`]
+}
+
+Table program_courses {
+  program_id bigint [not null, ref: > programs.id]
+  course_id bigint [not null, ref: > courses.id]
+  is_required boolean [default: false]
+  sequence_no int
+  indexes {
+    (program_id, course_id) [pk]
+  }
+}
+
+Table applications {
+  id bigserial [pk]
+  user_id bigint [not null, ref: > users.id]
+  program_id bigint [not null, ref: > programs.id]
+  status text [default: 'draft']
+  applied_at timestamptz [default: `now()`]
+  indexes {
+    (user_id, program_id) [unique]
+  }
+}
+
+Ref: user_roles.user_id > users.id
+Ref: user_roles.role_id > roles.id
+Ref: courses.category_id > categories.id
+Ref: program_courses.program_id > programs.id
+Ref: program_courses.course_id > courses.id
+Ref: applications.user_id > users.id
+Ref: applications.program_id > programs.id

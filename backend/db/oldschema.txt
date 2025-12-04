@@ -1,0 +1,514 @@
+-- Simplified PostgreSQL schema for learn4Sudan (core only)
+-- Core entities: users, roles, user_roles, categories, courses, programs, program_courses, applications
+
+-- Optional: enable extensions if you prefer UUIDs
+-- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Roles
+CREATE TABLE
+IF NOT EXISTS roles
+(
+    id          BIGSERIAL PRIMARY KEY,
+    name        TEXT NOT NULL UNIQUE,
+    description TEXT,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now
+()
+);
+
+-- Users
+CREATE TABLE
+IF NOT EXISTS users
+(
+    id             BIGSERIAL PRIMARY KEY,
+    email          TEXT NOT NULL UNIQUE,
+    password_hash  TEXT,
+    first_name     TEXT,
+    last_name      TEXT,
+    status         TEXT NOT NULL DEFAULT 'active' CHECK
+(status IN
+('active','inactive','blocked')),
+    created_at     TIMESTAMPTZ NOT NULL DEFAULT now
+(),
+    updated_at     TIMESTAMPTZ NOT NULL DEFAULT now
+()
+);
+
+-- Users ↔ Roles (many-to-many)
+CREATE TABLE
+IF NOT EXISTS user_roles
+(
+    user_id     BIGINT NOT NULL REFERENCES users
+(id) ON
+DELETE CASCADE,
+    role_id     BIGINT
+NOT NULL REFERENCES roles
+(id) ON
+DELETE RESTRICT,
+    assigned_at TIMESTAMPTZ
+NOT NULL DEFAULT now
+(),
+    PRIMARY KEY
+(user_id, role_id)
+);
+
+-- Categories
+CREATE TABLE
+IF NOT EXISTS categories
+(
+    id         BIGSERIAL PRIMARY KEY,
+    name       TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now
+()
+);
+
+-- Courses (no provider dependency for now)
+CREATE TABLE
+IF NOT EXISTS courses
+(
+    id                BIGSERIAL PRIMARY KEY,
+    title             TEXT NOT NULL,
+    short_description TEXT,
+    url               TEXT,
+    level             TEXT CHECK
+(level IN
+('beginner','intermediate','advanced','mixed')),
+    language          TEXT,
+    hours             INTEGER CHECK
+(hours IS NULL OR hours >= 0),
+    rating            NUMERIC
+(3,2) CHECK
+(rating IS NULL OR
+(rating >= 0 AND rating <= 5)),
+    category_id       BIGINT REFERENCES categories
+(id) ON
+DELETE
+SET NULL
+,
+    is_active         BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at        TIMESTAMPTZ NOT NULL DEFAULT now
+()
+);
+
+-- Programs (e.g., Coursera scholarship)
+CREATE TABLE
+IF NOT EXISTS programs
+(
+    id                   BIGSERIAL PRIMARY KEY,
+    name                 TEXT NOT NULL UNIQUE,
+    description          TEXT,
+    capacity             INTEGER CHECK
+(capacity IS NULL OR capacity >= 0),
+    status               TEXT NOT NULL DEFAULT 'draft' CHECK
+(status IN
+('draft','open','closed','in_progress','completed','archived')),
+    application_open_at  TIMESTAMPTZ,
+    application_close_at TIMESTAMPTZ,
+    start_date           DATE,
+    end_date             DATE,
+    created_at           TIMESTAMPTZ NOT NULL DEFAULT now
+()
+);
+
+-- Program ↔ Courses (curated mapping)
+CREATE TABLE
+IF NOT EXISTS program_courses
+(
+    program_id  BIGINT NOT NULL REFERENCES programs
+(id) ON
+DELETE CASCADE,
+    course_id   BIGINT
+NOT NULL REFERENCES courses
+(id) ON
+DELETE RESTRICT,
+    is_required BOOLEAN
+NOT NULL DEFAULT FALSE,
+    sequence_no INTEGER,
+    PRIMARY KEY
+(program_id, course_id)
+);
+
+-- Applications (user → program)
+CREATE TABLE
+IF NOT EXISTS applications
+(
+    id          BIGSERIAL PRIMARY KEY,
+    user_id     BIGINT NOT NULL REFERENCES users
+(id) ON
+DELETE CASCADE,
+    program_id  BIGINT
+NOT NULL REFERENCES programs
+(id) ON
+DELETE CASCADE,
+    status      TEXT
+NOT NULL DEFAULT 'draft' CHECK
+(status IN
+('draft','submitted','under_review','accepted','rejected','waitlisted','withdrawn')),
+    applied_at  TIMESTAMPTZ NOT NULL DEFAULT now
+(),
+    UNIQUE
+(user_id, program_id)
+);
+
+-- Helpful indexes
+CREATE INDEX
+IF NOT EXISTS idx_users_status ON users
+(status);
+CREATE INDEX
+IF NOT EXISTS idx_programs_status ON programs
+(status);
+CREATE INDEX
+IF NOT EXISTS idx_courses_category ON courses
+(category_id);
+CREATE INDEX
+IF NOT EXISTS idx_applications_program ON applications
+(program_id);
+CREATE INDEX
+IF NOT EXISTS idx_applications_user ON applications
+(user_id);
+
+-- Trigger to maintain users.updated_at
+CREATE OR REPLACE FUNCTION set_updated_at
+()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now
+();
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_users_updated_at
+ON users;
+CREATE TRIGGER trg_users_updated_at
+BEFORE
+UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at
+();
+-- PostgreSQL schema for learn4Sudan (Coursera scholarship programs)
+-- Run with psql or a compatible Postgres GUI. Adjust types as needed.
+
+-- Optional: enable extensions if you prefer UUIDs
+-- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Lookup/core tables
+CREATE TABLE
+IF NOT EXISTS roles
+(
+    id            BIGSERIAL PRIMARY KEY,
+    name          TEXT NOT NULL UNIQUE,
+    description   TEXT,
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT now
+()
+);
+
+CREATE TABLE
+IF NOT EXISTS users
+(
+    id               BIGSERIAL PRIMARY KEY,
+    email            TEXT NOT NULL UNIQUE,
+    password_hash    TEXT, -- if managed locally; otherwise nullable for SSO
+    first_name       TEXT,
+    last_name        TEXT,
+    phone            TEXT,
+    date_of_birth    DATE,
+    gender           TEXT CHECK
+(gender IN
+('female','male','nonbinary','prefer_not_to_say')),
+    country          TEXT,
+    city             TEXT,
+    status           TEXT NOT NULL DEFAULT 'active' CHECK
+(status IN
+('active','inactive','blocked')),
+    created_at       TIMESTAMPTZ NOT NULL DEFAULT now
+(),
+    updated_at       TIMESTAMPTZ NOT NULL DEFAULT now
+()
+);
+
+-- M:N user-role mapping
+CREATE TABLE
+IF NOT EXISTS user_roles
+(
+    user_id   BIGINT NOT NULL REFERENCES users
+(id) ON
+DELETE CASCADE,
+    role_id   BIGINT
+NOT NULL REFERENCES roles
+(id) ON
+DELETE RESTRICT,
+    assigned_at TIMESTAMPTZ
+NOT NULL DEFAULT now
+(),
+    PRIMARY KEY
+(user_id, role_id)
+);
+
+-- Organizations: sponsors/partners/providers admin orgs
+CREATE TABLE
+IF NOT EXISTS organizations
+(
+    id          BIGSERIAL PRIMARY KEY,
+    name        TEXT NOT NULL UNIQUE,
+    org_type    TEXT NOT NULL CHECK
+(org_type IN
+('sponsor','partner','school','ngo','government','other')),
+    website     TEXT,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now
+()
+);
+
+-- Course platforms (e.g., Coursera)
+CREATE TABLE
+IF NOT EXISTS providers
+(
+    id           BIGSERIAL PRIMARY KEY,
+    name         TEXT NOT NULL UNIQUE, -- e.g., 'Coursera'
+    platform_url TEXT,
+    created_at   TIMESTAMPTZ NOT NULL DEFAULT now
+()
+);
+
+-- Course taxonomy
+CREATE TABLE
+IF NOT EXISTS categories
+(
+    id          BIGSERIAL PRIMARY KEY,
+    name        TEXT NOT NULL UNIQUE,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now
+()
+);
+
+-- Courses synced from provider (Coursera)
+CREATE TABLE
+IF NOT EXISTS courses
+(
+    id                  BIGSERIAL PRIMARY KEY,
+    provider_id         BIGINT NOT NULL REFERENCES providers
+(id) ON
+DELETE RESTRICT,
+    provider_course_id  TEXT, -- external id at provider
+    title               TEXT
+NOT NULL,
+    short_description   TEXT,
+    url                 TEXT,
+    level               TEXT CHECK
+(level IN
+('beginner','intermediate','advanced','mixed')),
+    language            TEXT,
+    hours               INTEGER CHECK
+(hours IS NULL OR hours >= 0),
+    rating              NUMERIC
+(3,2) CHECK
+(rating IS NULL OR
+(rating >= 0 AND rating <= 5)),
+    category_id         BIGINT REFERENCES categories
+(id) ON
+DELETE
+SET NULL
+,
+    is_active           BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT now
+(),
+    UNIQUE
+(provider_id, provider_course_id)
+);
+
+-- Scholarship programs (cohorts optional)
+CREATE TABLE
+IF NOT EXISTS programs
+(
+    id                   BIGSERIAL PRIMARY KEY,
+    name                 TEXT NOT NULL UNIQUE,
+    description          TEXT,
+    sponsor_org_id       BIGINT REFERENCES organizations
+(id) ON
+DELETE
+SET NULL
+,
+    capacity             INTEGER CHECK
+(capacity IS NULL OR capacity >= 0),
+    status               TEXT NOT NULL DEFAULT 'draft' CHECK
+(status IN
+('draft','open','closed','in_progress','completed','archived')),
+    application_open_at  TIMESTAMPTZ,
+    application_close_at TIMESTAMPTZ,
+    start_date           DATE,
+    end_date             DATE,
+    eligibility_criteria TEXT,
+    created_at           TIMESTAMPTZ NOT NULL DEFAULT now
+()
+);
+
+-- Program cohorts (optional grouping inside a program)
+CREATE TABLE
+IF NOT EXISTS cohorts
+(
+    id          BIGSERIAL PRIMARY KEY,
+    program_id  BIGINT NOT NULL REFERENCES programs
+(id) ON
+DELETE CASCADE,
+    name        TEXT
+NOT NULL,
+    start_date  DATE,
+    end_date    DATE,
+    UNIQUE
+(program_id, name)
+);
+
+CREATE TABLE
+IF NOT EXISTS cohort_members
+(
+    id          BIGSERIAL PRIMARY KEY,
+    cohort_id   BIGINT NOT NULL REFERENCES cohorts
+(id) ON
+DELETE CASCADE,
+    user_id     BIGINT
+NOT NULL REFERENCES users
+(id) ON
+DELETE CASCADE,
+    role_in_cohort TEXT
+CHECK
+(role_in_cohort IN
+('learner','mentor','staff')),
+    joined_at   TIMESTAMPTZ NOT NULL DEFAULT now
+(),
+    UNIQUE
+(cohort_id, user_id)
+);
+
+-- Courses mapped into a program
+CREATE TABLE
+IF NOT EXISTS program_courses
+(
+    program_id   BIGINT NOT NULL REFERENCES programs
+(id) ON
+DELETE CASCADE,
+    course_id    BIGINT
+NOT NULL REFERENCES courses
+(id) ON
+DELETE RESTRICT,
+    is_required  BOOLEAN
+NOT NULL DEFAULT FALSE,
+    sequence_no  INTEGER,
+    PRIMARY KEY
+(program_id, course_id)
+);
+
+-- User applications to programs
+CREATE TABLE
+IF NOT EXISTS applications
+(
+    id            BIGSERIAL PRIMARY KEY,
+    user_id       BIGINT NOT NULL REFERENCES users
+(id) ON
+DELETE CASCADE,
+    program_id    BIGINT
+NOT NULL REFERENCES programs
+(id) ON
+DELETE CASCADE,
+    status        TEXT
+NOT NULL DEFAULT 'draft' CHECK
+(status IN
+('draft','submitted','under_review','accepted','rejected','waitlisted','withdrawn')),
+    applied_at    TIMESTAMPTZ NOT NULL DEFAULT now
+(),
+    reviewed_at   TIMESTAMPTZ,
+    reviewer_id   BIGINT REFERENCES users
+(id) ON
+DELETE
+SET NULL
+,
+    notes         TEXT,
+    UNIQUE
+(user_id, program_id)
+);
+
+-- User enrollment to courses (optionally tied to a program)
+CREATE TABLE
+IF NOT EXISTS enrollments
+(
+    id              BIGSERIAL PRIMARY KEY,
+    user_id         BIGINT NOT NULL REFERENCES users
+(id) ON
+DELETE CASCADE,
+    course_id       BIGINT
+NOT NULL REFERENCES courses
+(id) ON
+DELETE RESTRICT,
+    program_id      BIGINT
+REFERENCES programs
+(id) ON
+DELETE
+SET NULL
+,
+    status          TEXT NOT NULL DEFAULT 'enrolled' CHECK
+(status IN
+('enrolled','in_progress','completed','dropped')),
+    enrolled_at     TIMESTAMPTZ NOT NULL DEFAULT now
+(),
+    completed_at    TIMESTAMPTZ,
+    progress_pct    NUMERIC
+(5,2) CHECK
+(progress_pct IS NULL OR
+(progress_pct >= 0 AND progress_pct <= 100)),
+    UNIQUE
+(user_id, course_id, COALESCE
+(program_id, 0))
+);
+
+-- Certificates issued on completion
+CREATE TABLE
+IF NOT EXISTS certificates
+(
+    id                     BIGSERIAL PRIMARY KEY,
+    user_id                BIGINT NOT NULL REFERENCES users
+(id) ON
+DELETE CASCADE,
+    course_id              BIGINT
+NOT NULL REFERENCES courses
+(id) ON
+DELETE RESTRICT,
+    provider_certificate_id TEXT,
+    issued_at              TIMESTAMPTZ,
+    certificate_url        TEXT,
+    UNIQUE
+(user_id, course_id)
+);
+
+-- Helpful indexes
+CREATE INDEX
+IF NOT EXISTS idx_users_status ON users
+(status);
+CREATE INDEX
+IF NOT EXISTS idx_programs_status ON programs
+(status);
+CREATE INDEX
+IF NOT EXISTS idx_courses_provider ON courses
+(provider_id);
+CREATE INDEX
+IF NOT EXISTS idx_enrollments_user ON enrollments
+(user_id);
+CREATE INDEX
+IF NOT EXISTS idx_applications_program ON applications
+(program_id);
+
+-- Triggers for updated_at
+CREATE OR REPLACE FUNCTION set_updated_at
+()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now
+();
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_users_updated_at
+ON users;
+CREATE TRIGGER trg_users_updated_at
+BEFORE
+UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at
+();
