@@ -1,0 +1,146 @@
+generate FULL Mongoose Models for your schema.
+
+These will go into:
+
+backend/models/
+
+1️⃣ Role Model – models/Role.js
+const mongoose = require("mongoose");
+
+const RoleSchema = new mongoose.Schema({
+  name: { type: String, required: true, unique: true },
+  description: String,
+  created_at: { type: Date, default: Date.now }
+});
+
+module.exports = mongoose.model("Role", RoleSchema);
+
+2️⃣ User Model – models/User.js
+const mongoose = require("mongoose");
+
+const UserSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  password_hash: String,
+  first_name: String,
+  last_name: String,
+
+  status: {
+    type: String,
+    enum: ["active", "inactive", "blocked"],
+    default: "active"
+  },
+
+  roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Role" }],
+
+  created_at: { type: Date, default: Date.now },
+  updated_at: { type: Date, default: Date.now }
+});
+
+// Auto-update updated_at
+UserSchema.pre("save", function (next) {
+  this.updated_at = Date.now();
+  next();
+});
+
+module.exports = mongoose.model("User", UserSchema);
+
+3️⃣ Category Model – models/Category.js
+const mongoose = require("mongoose");
+
+const CategorySchema = new mongoose.Schema({
+  name: { type: String, required: true, unique: true },
+  created_at: { type: Date, default: Date.now }
+});
+
+module.exports = mongoose.model("Category", CategorySchema);
+
+4️⃣ Course Model – models/Course.js
+const mongoose = require("mongoose");
+
+const CourseSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  short_description: String,
+  url: String,
+  level: {
+    type: String,
+    enum: ["beginner", "intermediate", "advanced", "mixed"]
+  },
+  language: String,
+  hours: Number,
+  rating: Number,
+
+  category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+
+  is_active: { type: Boolean, default: true },
+  created_at: { type: Date, default: Date.now }
+});
+
+module.exports = mongoose.model("Course", CourseSchema);
+
+5️⃣ Program Model – models/Program.js
+const mongoose = require("mongoose");
+
+const ProgramSchema = new mongoose.Schema({
+  name: { type: String, required: true, unique: true },
+  description: String,
+  capacity: Number,
+  status: {
+    type: String,
+    enum: ["draft", "open", "closed", "in_progress", "completed", "archived"],
+    default: "draft"
+  },
+
+  application_open_at: Date,
+  application_close_at: Date,
+  start_date: Date,
+  end_date: Date,
+
+  courses: [
+    {
+      course: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+      is_required: { type: Boolean, default: false },
+      sequence_no: Number
+    }
+  ],
+
+  created_at: { type: Date, default: Date.now }
+});
+
+module.exports = mongoose.model("Program", ProgramSchema);
+
+6️⃣ Application Model – models/Application.js
+const mongoose = require("mongoose");
+
+const ApplicationSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  program: { type: mongoose.Schema.Types.ObjectId, ref: "Program", required: true },
+
+  status: {
+    type: String,
+    enum: ["draft", "submitted", "under_review", "accepted", "rejected", "waitlisted", "withdrawn"],
+    default: "draft"
+  },
+
+  applied_at: { type: Date, default: Date.now }
+});
+
+// Unique application per user per program
+ApplicationSchema.index({ user: 1, program: 1 }, { unique: true });
+
+module.exports = mongoose.model("Application", ApplicationSchema);
+
+🎉 You're Done — This Is the Whole Database Layer!
+
+No SQL.
+No migrations.
+You can now:
+
+➤ create users easily
+const user = await User.create({ email: "test@gmail.com" });
+
+➤ assign roles
+user.roles.push(roleId);
+await user.save();
+
+➤ load related models
+const apps = await Application.find().populate("user").populate("program");
