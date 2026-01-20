@@ -161,16 +161,15 @@ textarea:focus {
 
 /* Angled bottom divider to mimic reference */
 .hero::after {
-   content: "";
-    position: absolute;
-    bottom: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 96px;
-    height: 24px;
-    background: #1f2530;
-    clip-path: polygon(0 0, 100% 0, 50% 100%);
-    filter: drop-shadow(0 6px 10px rgb(0 0 0 / 25%))
+  content: "";
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96px;
+  height: 24px;
+   clip-path: polygon(0 0, 100% 0, 50% 100%);
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 25%));
 }
 
 .hero-inner {
@@ -229,7 +228,6 @@ textarea:focus {
 }
 
 .card {
-    background: linear-gradient(to left, rgb(74, 72, 167), rgb(34, 34, 44));  color: white;
   padding: 2.25rem;
   border-radius: 16px;
   display: flex;

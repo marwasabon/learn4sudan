@@ -5,6 +5,9 @@ const UserSchema = new mongoose.Schema({
   password_hash: { type: String },
   first_name: { type: String },
   last_name: { type: String },
+  school: { type: String },
+  date_of_birth: { type: String },
+  national_id_number: { type: String },
   status: {
     type: String,
     enum: ["active", "inactive", "blocked"],

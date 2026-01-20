@@ -1,11 +1,14 @@
 {
   "name": "learn4sudan",
-  "author": {"name": "Mawa"},
+  "author": {
+    "name": "Mawa S bashir "
+  },
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "vite",
     "build": "vite build",
     "preview": "vite preview --port 5173"
   },
@@ -16,12 +19,15 @@
     "pg": "^8.16.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "sequelize": "^6.37.7"
+    "react-router-dom": "^6.28.0",
+    "sequelize": "^6.37.7",
+    "tesseract.js": "^6.0.1"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.2",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.41",
     "tailwindcss": "^3.4.13",
-    "vite": "^5.4.10"
+      "vite": "^7.3.0"
   }
 }

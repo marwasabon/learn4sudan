@@ -4,6 +4,7 @@ const ProgramSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
   description: { type: String },
   capacity: { type: Number },
+  image_url: { type: String },
   status: {
     type: String,
     enum: ["draft", "open", "closed", "in_progress", "completed", "archived"],

@@ -7,6 +7,10 @@ const ApplicationSchema = new mongoose.Schema({
     ref: "Program",
     required: true,
   },
+  school: { type: String },
+  reason: { type: String },
+  date_of_birth: { type: String },
+  national_id_number: { type: String },
   status: {
     type: String,
     enum: [
@@ -21,6 +25,7 @@ const ApplicationSchema = new mongoose.Schema({
     default: "draft",
   },
   applied_at: { type: Date, default: Date.now },
+  national_id_file: { type: String },
 });
 
 // Unique application per user per program

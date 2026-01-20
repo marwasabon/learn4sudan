@@ -1,0 +1,23 @@
+/* Roles page standalone styles (no Tailwind) */
+body { background: #f8fafc; color: #222; }
+
+.page-wrap { padding: 24px; }
+
+.header-row { align-items: center; margin-bottom: 16px; }
+.header-row .title { font-weight: 700; text-align: center; color: #1e7e34; }
+.header-row .btn-primary { background-color: #0d6efd; }
+
+.table-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 6px 12px rgba(0,0,0,0.06); }
+.table-card .table { margin-bottom: 0; }
+.table-card thead th { background: #f1f3f5; font-weight: 600; }
+
+.actions i { font-size: 1.1rem; cursor: pointer; margin-right: 10px; }
+.actions i:last-child { margin-right: 0; }
+
+.badge-muted { background: #e9ecef; color: #495057; }
+
+.modal .form-label { font-weight: 600; }
+
+.search-input { max-width: 280px; }
+
+.container-narrow { max-width: 1100px; }

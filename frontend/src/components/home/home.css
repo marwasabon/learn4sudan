@@ -1,0 +1,58 @@
+/* Hero */
+.hero { padding: 4rem 1rem; background: linear-gradient(180deg, #f0fbff, #ffffff); }
+.hero-content { max-width: 920px; margin: 0 auto; text-align: center; }
+.hero .btn-primary { display: inline-block; margin-top: 1rem; }
+
+/* About */
+.about { padding: 2rem 1rem; }
+.about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; }
+.about .card { background: #f7fbfb; border: 2px solid rgba(0,0,0,0.06); border-radius: 12px; padding: 0.75rem 1rem; }
+.about .card h3 { margin: 0 0 0.5rem; }
+.about .card p { margin: 0.5rem 0 0; }
+.about .card p:last-child { margin-bottom: 0; }
+.about .card .card-illustration { width: 64px; height: 64px; }
+
+/* Programs */
+.programs { padding: 2rem 1rem; }
+.program-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; align-items: stretch; }
+.program { border-radius: 14px; background: #f7fbfb; border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 6px 14px rgba(0,0,0,0.06); padding: 0.75rem; display: flex; flex-direction: column; }
+.program-image { width: 100%; height: 120px; object-fit: contain; }
+.program-title { margin-top: 0.5rem; font-size: 1rem; }
+.program-desc { color: #355f62; }
+.program-actions { margin-top: 0.5rem; display: flex; align-items: center; justify-content: space-between; }
+.program-status { font-size: 0.875rem; color: #6b7280; }
+
+/* Quotes */
+.quotes-carousel { background: #e9f1f6; border-radius: 12px; padding: 3rem 1rem; position: relative; text-align: center; margin-top: 2rem; }
+.quotes-title { font-size: 2rem; font-weight: 800; color: #2b3b4b; margin-bottom: 1rem; }
+.quotes-title-word { display: inline-block; margin-right: 8px; }
+.quotes-underline { display: block; height: 6px; width: 120px; background: #69c3cf; border-radius: 3px; margin-top: 6px; margin-left: auto; margin-right: auto; }
+.quotes-text { font-size: 1.5rem; color: #2b3b4b; margin: 0 auto 0.75rem; max-width: 900px; font-weight: 500; font-style: italic; }
+.quotes-author { color: #637a8c; margin-bottom: 2rem; }
+.quotes-nav { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: none; color: #69c3cf; font-size: 28px; cursor: pointer; }
+.quotes-nav.prev { left: 16px; }
+.quotes-nav.next { right: 16px; }
+.quotes-dots { display: flex; gap: 8px; justify-content: center; }
+.quotes-dot { width: 10px; height: 10px; border-radius: 50%; border: none; background: #9fb5c6; cursor: pointer; }
+.quotes-dot.active { background: #69c3cf; }
+
+/* Gallery */
+.gallery { padding: 2rem 1rem; }
+.gallery-subtitle { color: #355f62; margin-top: -0.5rem; }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.gallery-item { position: relative; overflow: hidden; border-radius: 16px; box-shadow: 0 10px 20px rgba(0,0,0,0.10); border: 1px solid rgba(0,0,0,0.06); background: #f7fbfb; }
+.gallery-image { display: block; width: 100%; height: 220px; object-fit: cover; transform: scale(1); transition: transform 250ms ease; }
+
+/* Footer */
+.footer { border-top: 1px solid rgba(0,0,0,0.08); padding: 3rem 1rem 2rem; background: linear-gradient(to left, rgb(57, 55, 160), rgb(34, 34, 44)); color: #fff; }
+.footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; align-items: start; max-width: 1200px; margin: 0 auto; }
+.footer-title { font-weight: 800; font-size: 1.5rem; margin-bottom: 12px; }
+.footer-text { color: #bcc7d2ff; line-height: 1.7; }
+.footer-links { list-style: none; padding: 0; margin: 0; line-height: 2; }
+.footer-link { color: aqua; text-decoration: none; }
+.footer-input { width: 100%; height: 56px; border-radius: 12px; border: 1px solid transparent; background: #1f3137ff; color: #fff; padding: 0 16px; outline: none; }
+.footer-button { margin-top: 12px; width: 100%; height: 56px; border-radius: 12px; border: none; background: #16a59eff; color: #fff; font-weight: 700; font-size: 18px; cursor: pointer; }
+.footer-msg { margin-top: 8px; color: #2b3b4b; }
+.footer-socials { display: flex; gap: 16px; flex-wrap: wrap; }
+.footer-social { color: #d1d5db; text-decoration: none; display: inline-flex; align-items: center; }
+.footer-copy { text-align: center; margin-top: 24px; color: #e8eaebff; }
